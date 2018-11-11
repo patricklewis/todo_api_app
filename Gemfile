@@ -25,3 +25,7 @@ group :development do
   gem 'spring-commands-rspec', '~> 1.0'
   gem 'spring-commands-rubocop', '~> 0.2'
 end
+
+group :test do
+  gem 'shoulda-matchers'
+end
