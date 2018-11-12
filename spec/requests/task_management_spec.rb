@@ -36,8 +36,10 @@ RSpec.describe 'Task management', type: :request do
   end
 
   describe 'updating a task' do
+    let(:tag_title) { 'TestTag' }
+    let!(:tag) { Tag.create(title: tag_title) }
     let!(:task) { Task.create(title: 'Old title') }
-    let(:data) { { attributes: { title: 'New title' } } }
+    let(:data) { { attributes: { title: 'New title', tags: [tag_title] } } }
 
     before do
       patch "/api/v1/tasks/#{task.id}/", params: { data: data }
@@ -51,6 +53,10 @@ RSpec.describe 'Task management', type: :request do
       id = returned_object['id'].to_i
 
       expect(id).to eq(task.id)
+    end
+
+    it 'applies taggings' do
+      expect(task.tags).to contain_exactly(tag)
     end
   end
 

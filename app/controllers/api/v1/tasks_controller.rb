@@ -14,7 +14,13 @@ module Api
       end
 
       def update
-        @task.update!(task_params)
+        attributes = task_params['attributes']
+        tag_titles = attributes.delete('tags') || []
+
+        tags = tag_titles.map { |title| Tag.find_by!(title: title) }
+
+        @task.update!(attributes.merge(tags: tags))
+
         render json: @task
       end
 
@@ -30,7 +36,7 @@ module Api
       end
 
       def task_params
-        params.require(:data).permit(attributes: [:title])
+        params.require(:data).permit(attributes: [:title, tags: []])
       end
     end
   end
