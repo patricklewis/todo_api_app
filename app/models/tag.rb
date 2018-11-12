@@ -1,3 +1,3 @@
 class Tag < ApplicationRecord
-  validates :title, uniqueness: true
+  validates :title, presence: true, uniqueness: true
 end
