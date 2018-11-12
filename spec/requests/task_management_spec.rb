@@ -36,24 +36,34 @@ RSpec.describe 'Task management', type: :request do
   end
 
   describe 'updating a task' do
-    let(:task) { Task.create(title: 'Old title') }
+    let!(:task) { Task.create(title: 'Old title') }
     let(:data) { { attributes: { title: 'New title' } } }
 
     before do
-      task
       patch "/api/v1/tasks/#{task.id}/", params: { data: data }
     end
 
     it 'updates the task' do
-      title = returned_object['attributes']['title']
-
-      expect(title).to eq(data[:attributes][:title])
+      expect(task.reload.title).to eq(data[:attributes][:title])
     end
 
     it 'returns the expected task' do
       id = returned_object['id'].to_i
 
       expect(id).to eq(task.id)
+    end
+  end
+
+  describe 'deleting a task' do
+    let!(:task) { Task.create(title: 'On borrowed time') }
+    let!(:remaining_task) { Task.create(title: 'Remaining task') }
+
+    before do
+      delete "/api/v1/tasks/#{task.id}/"
+    end
+
+    it 'removes the task' do
+      expect(Task.all).to contain_exactly(remaining_task)
     end
   end
 end
